@@ -16,13 +16,13 @@ for (p in Problems)
   {
     for (alg in ALGs)
     {
-      count <- NROW(subset(data,data$Problem==p & data$QI==qi & data$Algo==alg))
-      den <- NROW(subset(data,data$Problem==p & data$QI==qi & (data$Alg1==alg | data$Alg2==alg)))
-      Percent <- count/den
       if(alg=="CELLDE"&&p=='RM')
         next
       if((alg=="CELLDE"|alg=="SMPSO")&&(p=='RALIC'|p=='WORD'|p=='NRL'))
         next
+      count <- NROW(subset(data,data$Problem==p & data$QI==qi & data$Algo==alg))
+      den <- NROW(subset(data,data$Problem==p & data$QI==qi & (data$Alg1==alg | data$Alg2==alg)))
+      Percent <- count/den
       row <- data.frame(NameOfProblem = p, QI=qi, Algo = alg, Counter = count, Percentage = Percent, PercentageII = Percent*100)
       dataDiffStructure <- rbind(dataDiffStructure, row)
       overallcount<-overallcount+count

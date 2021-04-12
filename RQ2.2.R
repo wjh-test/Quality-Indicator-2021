@@ -17,6 +17,10 @@ for (p in Problems)
   {
     for (qi in QIs)
     {
+      if(alg=="CELLDE"&&p=='RM')
+        next
+      if((alg=="CELLDE"|alg=="SMPSO")&&(p=='RALIC'|p=='WORD'|p=='NRL'))
+        next
       count <- NROW(subset(data,data$Problem==p & data$Algo==alg & data$QI==qi))
       den <- NROW(subset(data,data$Problem==p & data$Algo==alg & (data$QI1==qi | data$QI2==qi)))
       Percent <- count/den
