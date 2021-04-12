@@ -4,8 +4,7 @@ library("effsize")#for A12 test https://rdrr.io/cran/effsize/man/VD.A.html
 
 data <- read.table(file = "data/inputDataDiffStructure.txt", head = TRUE)
 QIs <- c("HV", "IGD", "EP", "GD", "GS", "ED", "PFS", "C")
-ALGs <- c("CELLDE", "MOCELL", "NSGA-II", "PAES", "SMPSO", "SPEA2", "ND")
-#Problems <- c("RA", "TS", "TRA", "RP", "TM", "TP1", "TP2_1", "TP2_2", "TP2_3", "RM", "ITO", ...)
+ALGs <- c("CELLDE", "MOCELL", "NSGA-II", "PAES", "SMPSO", "SPEA2")
 Problems <- as.vector(unique(data$Problem))
 
 overallcount <-0
@@ -18,35 +17,15 @@ for (p in Problems)
     for (alg in ALGs)
     {
       count <- NROW(subset(data,data$Problem==p & data$QI==qi & data$Algo==alg))
-      if (p=='RM') {
-        if(alg=="ND") {
-          Percent <- count/10#4+3+2+1=10
-        }
-        else {
-          Percent <- count/4#5-1=4
-        }
-      }
-      else if(p=='RALIC'|p=='WORD'|p=='NRL') {
-        if(alg=="ND") {
-          Percent <- count/6#3+2+1=6
-        }
-        else {
-          Percent <- count/3#4-1=3
-        }
-      }
-      else{
-        if(alg=="ND") {
-          Percent <- count/15#5+4+3+2+1=15
-        }
-        else {
-          Percent <- count/5#6-1=5
-        }
-      }
-      if(alg!="CELLDE"|alg!="SMPSO"|p!='RM'|p!='RALIC'|p!='WORD'|p!='NRL'){
-        row <- data.frame(NameOfProblem = p, QI=qi, Algo = alg, Counter = count, Percentage = Percent, PercentageII = Percent*100)
-        dataDiffStructure <- rbind(dataDiffStructure, row)
-        overallcount<-overallcount+count
-      }
+      den <- NROW(subset(data,data$Problem==p & data$QI==qi & (data$Alg1==alg | data$Alg2==alg)))
+      Percent <- count/den
+      if(alg=="CELLDE"&&p=='RM')
+        next
+      if((alg=="CELLDE"|alg=="SMPSO")&&(p=='RALIC'|p=='WORD'|p=='NRL'))
+        next
+      row <- data.frame(NameOfProblem = p, QI=qi, Algo = alg, Counter = count, Percentage = Percent, PercentageII = Percent*100)
+      dataDiffStructure <- rbind(dataDiffStructure, row)
+      overallcount<-overallcount+count
     }
   }
 }

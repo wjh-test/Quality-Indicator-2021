@@ -18,12 +18,8 @@ for (p in Problems)
     for (qi in QIs)
     {
       count <- NROW(subset(data,data$Problem==p & data$Algo==alg & data$QI==qi))
-      countQI <- (8-1)
-      if (qi=='ND')
-      {
-        countQI <- 28#1+2+3+4+5+6+7=28
-      }
-      Percent <- count/countQI
+      den <- NROW(subset(data,data$Problem==p & data$Algo==alg & (data$QI1==qi | data$QI2==qi)))
+      Percent <- count/den
       row <- data.frame(NameOfProblem = p, Algo = alg, QI=qi, Counter = count, Percentage = Percent, PercentageII = Percent*100)
       dataDiffStructure <- rbind(dataDiffStructure, row)
       overallcount<-overallcount+count
