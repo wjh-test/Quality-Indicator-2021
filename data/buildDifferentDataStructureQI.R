@@ -17,6 +17,10 @@ for(p in Problems)
     {
       for(alg in ALGs)
       {
+        if(alg=="CELLDE"&&p=='RM')
+          next
+        if((alg=="CELLDE"|alg=="SMPSO")&&(p=='RALIC'|p=='WORD'|p=='NRL'))
+          next
         count1 <- NROW(subset(data, data$Problem==p & data$QI==qi1 & data$Algo==alg))
         count2 <- NROW(subset(data, data$Problem==p & data$QI==qi2 & data$Algo==alg))
         if(count1 > count2) {
