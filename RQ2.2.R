@@ -3,7 +3,7 @@ rm(list = ls(all = TRUE))
 library("effsize")#for A12 test https://rdrr.io/cran/effsize/man/VD.A.html
 
 data <- read.table(file = "data/inputDataDiffStructureQI.txt", head = TRUE)
-QIs <- c("HV", "IGD", "EP", "GD", "GS", "ED", "PFS", "C", "ND")
+QIs <- c("HV", "IGD", "EP", "GD", "GS", "ED", "PFS", "C")
 ALGs <- c("CELLDE", "MOCELL", "NSGA-II", "PAES", "SMPSO", "SPEA2")
 #Problems <- c("RA", "TS", "TRA", "RP", "TM", "TP1", "TP2_1", "TP2_2", "TP2_3", "RM", "ITO", ...)
 Problems <- as.vector(unique(data$Problem))
