@@ -19,6 +19,7 @@ for (alg in ALGs)
     percen <- count/den
     row <- data.frame(Algo = alg, QI=qi, Counter = count, Percentage=percen, PercentageII=percen*100)
     dataDiffStructure <- rbind(dataDiffStructure, row)
+    dataALG <- rbind(dataALG, row)
     overallcount <- overallcount+count
   }
   dataALG$id <- seq.int(nrow(dataALG))
