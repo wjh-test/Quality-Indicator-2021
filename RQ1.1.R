@@ -19,6 +19,7 @@ for (qi in QIs)
     percen <- count/den
     row <- data.frame(QI=qi, Algo = alg, Counter = count, Percentage=percen, PercentageII=percen*100)
     dataDiffStructure <- rbind(dataDiffStructure, row)
+    dataQI <- rbind(dataQI, row)
     overallcount <- overallcount+count
   }
   dataQI$id <- seq.int(nrow(dataQI))
