@@ -14,5 +14,3 @@ To achieve this aim, we conducted an extensive empirical evaluation with 18 sear
 * Shaukat Ali https://www.simula.no/people/shaukat
 * Huihui Zhang
 
-## Paper
-
