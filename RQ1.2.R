@@ -45,6 +45,7 @@ ALGs <- c("CELLDE", "MOCELL", "NSGA-II", "PAES", "SMPSO", "SPEA2")
 dataStructureBetter <- data.frame()#only strictly better
 dataStructureBetterEq <- data.frame()#better and equal
 dataStructureEq <- data.frame()#only equal
+min <- 1.0
 for (qi in QIs)
 {
   dataQI <-subset(dataS, dataS$QI==qi)
@@ -60,9 +61,10 @@ for (qi in QIs)
         if (UtestPvalue < 0.05) {
           if ( A12est > 0.5)
           {
-            row <- data.frame(QI=qi, Algo1 = alg1, Algo2 = alg2, Preferred = alg1 )
+            row <- data.frame(QI=qi, Algo1 = alg1, Algo2 = alg2, Preferred = alg1)
             dataStructureBetter <- rbind(dataStructureBetter, row)
             dataStructureBetterEq <- rbind(dataStructureBetterEq, row)
+            if(A12est < min) min <- A12est
           }
         }
         else {
@@ -80,3 +82,4 @@ write.table(dataStructureBetterEq, file = "results/RQ1.2pvaluesBetterEq.txt", se
 write.table(dataStructureBetter, file = "results/RQ1.2pvaluesBetter.txt", sep = "\t", quote = FALSE, row.names = FALSE)
 
 print(overallcount)
+print(min)

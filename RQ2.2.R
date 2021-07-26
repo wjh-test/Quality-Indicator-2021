@@ -46,6 +46,7 @@ QIs <- c("HV", "IGD", "EP", "GD", "GS", "ED", "PFS", "C")
 dataStructureBetter <- data.frame()#only strictly better
 dataStructureBetterEq <- data.frame()#better and equal
 dataStructureEq <- data.frame()#only equal
+min <- 1.0
 for (alg in ALGs)
 {
   dataALG <-subset(dataS, dataS$Algo==alg)
@@ -64,6 +65,7 @@ for (alg in ALGs)
             row <- data.frame(Algo=alg, QI1=qi1, QI2=qi2, Preferred=qi1)
             dataStructureBetter <- rbind(dataStructureBetter, row)
             dataStructureBetterEq <- rbind(dataStructureBetterEq, row)
+            if(A12est < min) min <- A12est
           }
         }
         else {
@@ -81,3 +83,4 @@ write.table(dataStructureBetterEq, file = "results/RQ2.2pvaluesBetterEq.txt", se
 write.table(dataStructureBetter, file = "results/RQ2.2pvaluesBetter.txt", sep = "\t", quote = FALSE, row.names = FALSE)
 
 print(overallcount)
+print(min)
