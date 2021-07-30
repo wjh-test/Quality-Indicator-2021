@@ -34,9 +34,14 @@ write.table(dataDiffStructure, file = "results/RQ1.2.txt", sep = "\t", quote = F
 for (qi in QIs) {
   qiResults <- subset(dataDiffStructure,dataDiffStructure$QI==qi)
   write.table(qiResults, file = paste0("results/byQIProblem/byQIProblem",qi,".txt"), sep = "\t", quote = FALSE, row.names = FALSE)
+  for(p in Problems) {
+    pResults <- subset(qiResults,qiResults$NameOfProblem==p)[,c(3,5,6)]
+    pResults <- pResults[order(-pResults$Percentage),]
+    write.table(pResults, file = paste0("results/byQIProblem/byQIProblemSplit/byQIProblem",qi,"_",p,".txt"), sep = "\t", quote = FALSE, row.names = FALSE)
+  }
   for(a in ALGs) {
     qiPresults <- subset(qiResults,qiResults$Algo==a)[,c(1,5,6)]
-    write.table(qiPresults, file = paste0("results/byQIProblem/byQIProblemSplit/byQIProblem",qi,"_",a,".txt"), sep = "\t", quote = FALSE, row.names = FALSE)
+    write.table(qiPresults, file = paste0("results/byQIProblem/byQIALGSplit/byQIProblem",qi,"_",a,".txt"), sep = "\t", quote = FALSE, row.names = FALSE)
   }
 }
 

@@ -35,9 +35,18 @@ write.table(dataDiffStructure, file = "results/RQ2.2.txt", sep = "\t", quote = F
 for(a in ALGs) {
   algResults <- subset(dataDiffStructure,dataDiffStructure$Algo==a)
   write.table(algResults, file = paste0("results/byALGProblem/byALGProblem",a,".txt"), sep = "\t", quote = FALSE, row.names = FALSE)
+  for(p in Problems) {
+    if(a=="CELLDE"&&p=='RM')
+      next
+    if((a=="CELLDE"|a=="SMPSO")&&(p=='RALIC'|p=='WORD'|p=='NRL'))
+      next
+    pResults <- subset(algResults,algResults$NameOfProblem==p)[,c(3,5,6)]
+    pResults <- pResults[order(-pResults$Percentage),]
+    write.table(pResults, file = paste0("results/byALGProblem/byALGProblemSplit/byALGProblem",a,"_",p,".txt"), sep = "\t", quote = FALSE, row.names = FALSE)
+  }
   for (qi in QIs) {
     algPresults <- subset(algResults,algResults$QI==qi)[,c(1,5,6)]
-    write.table(algPresults, file = paste0("results/byALGProblem/byALGProblemSplit/byALGProblem",a,"_",qi,".txt"), sep = "\t", quote = FALSE, row.names = FALSE)
+    write.table(algPresults, file = paste0("results/byALGProblem/byALGQISplit/byALGProblem",a,"_",qi,".txt"), sep = "\t", quote = FALSE, row.names = FALSE)
   }
 }
 
