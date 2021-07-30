@@ -1,0 +1,6 @@
+Algo	Percentage	PercentageII
+SPEA2	1	100
+MOCELL	0.5	50
+NSGA-II	0.5	50
+PAES	0.25	25
+SMPSO	0	0
