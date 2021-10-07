@@ -8,7 +8,13 @@ library("hasseDiagram")
 QIs <- c("HV", "IGD", "EP", "GD", "GS", "ED", "PFS", "C")
 ALGs <- c("CELLDE", "MOCELL", "NSGA-II", "PAES", "SMPSO", "SPEA2")
 
-dataPvaluesBetter <- read.table(file = "results/RQ2.2pvaluesBetter.txt", head = TRUE)
+PAIRED = TRUE
+if(PAIRED) {
+  dataPvaluesBetter <- read.table(file = "results/RQ2.2pvaluesBetter_paired.txt", head = TRUE)
+}else {
+  dataPvaluesBetter <- read.table(file = "results/RQ2.2pvaluesBetter.txt", head = TRUE)
+}
+
 for (alg in ALGs)
 {
   dataPvaluesBetterALG <- subset(dataPvaluesBetter, dataPvaluesBetter$Algo==alg)
@@ -23,12 +29,12 @@ for (alg in ALGs)
       }
     }
   }
-  png(file = paste0("results/RQ2.2plots/hasseDiagram", alg, ".png"))
+  png(file = paste0("results/RQ2.2plots/", ifelse(PAIRED,"paired/",""), "hasseDiagram", alg, ".png"))
   par(mar = c(0, 0, 0, 0))
   hasse(dataALG, QIs, list(cluster = FALSE, transitiveReduction=TRUE))
   dev.off()
   
-  png(file = paste0("results/RQ2.2plots/hasseDiagram", alg, "noTrans.png"))
+  png(file = paste0("results/RQ2.2plots/", ifelse(PAIRED,"paired/",""), "hasseDiagram", alg, "noTrans.png"))
   par(mar = c(0, 0, 0, 0))
   hasse(dataALG, QIs, list(cluster = FALSE, transitiveReduction=FALSE))
   dev.off()

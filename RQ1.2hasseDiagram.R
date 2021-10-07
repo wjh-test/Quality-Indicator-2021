@@ -8,16 +8,12 @@ library("hasseDiagram")
 QIs <- c("HV", "IGD", "EP", "GD", "GS", "ED", "PFS", "C")
 ALGs <- c("CELLDE", "MOCELL", "NSGA-II", "PAES", "SMPSO", "SPEA2")
 
-#data <- matrix(data = FALSE, ncol = 6, nrow = 6)
-#data[1, 2] = data[1, 4] = data[2, 4] = data[3, 1] = data[3, 2] = data[3, 4] = data[5, 4] = data[6, 2] = data[6, 4] = TRUE
-#hasse(data, ALGs, list(cluster = FALSE))
-
 PAIRED = TRUE
 
 if(PAIRED) {
-  dataPvaluesBetter <- read.table(file = "results/RQ1.2pvaluesBetter.txt", head = TRUE)  
-}else {
   dataPvaluesBetter <- read.table(file = "results/RQ1.2pvaluesBetter_Paired.txt", head = TRUE)
+}else {
+  dataPvaluesBetter <- read.table(file = "results/RQ1.2pvaluesBetter.txt", head = TRUE)
 }
 for (qi in QIs)
 {

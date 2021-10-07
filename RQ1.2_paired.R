@@ -62,11 +62,11 @@ for (qi in QIs)
         dataStructureBetterEqPairedUnpaired <- rbind(dataStructureBetterEqPairedUnpaired, row)
         if(!(row$PreferredPaired=="EQUAL")) {
           dataStructureBetterPairedUnpaired <- rbind(dataStructureBetterPairedUnpaired, row)
-          rowFiltered <- data.frame(QI=row$QI, firstApproach=row$firstApproach, secondApproach=row$secondApproach, PreferredPaired=row$PreferredPaired)
+          rowFiltered <- data.frame(QI=row$QI, Algo1=row$firstApproach, Algo2=row$secondApproach, PreferredPaired=row$PreferredPaired)
           dataStructureBetterPaired <- rbind(dataStructureBetterPaired, rowFiltered)
         }
         if(row$PreferredUnpairedAll!=row$PreferredPaired) {
-          rowFilteredDiff <- data.frame(QI=row$QI, firstApproach=row$firstApproach, secondApproach=row$secondApproach, PreferredPaired=row$PreferredPaired, PreferredUnpaired=row$PreferredUnpairedAll)
+          rowFilteredDiff <- data.frame(QI=row$QI, Algo1=row$firstApproach, Algo2=row$secondApproach, PreferredPaired=row$PreferredPaired, PreferredUnpaired=row$PreferredUnpairedAll)
           diffPairedUnpaired <- rbind(diffPairedUnpaired, rowFilteredDiff)
         }
       }
@@ -74,7 +74,5 @@ for (qi in QIs)
   }
 }
 #allDiff <- subset(dataStructureBetterEqPaired,dataStructureBetterEqPairedUnpaired$PreferredUnpairedAll!=dataStructureBetterEqPaired$PreferredPaired)
-#write.table(dataStructureBetterEqPairedUnpaired, file = "results/RQ1.2pvaluesBetterEq_UnpairedPaired.txt", sep = "\t", quote = FALSE, row.names = FALSE)
-#write.table(dataStructureBetterPairedUnpaired, file = "results/RQ1.2pvaluesBetter_UnpairedPaired.txt", sep = "\t", quote = FALSE, row.names = FALSE)
 write.table(dataStructureBetterPaired, file = "results/RQ1.2pvaluesBetter_Paired.txt", sep = "\t", quote = FALSE, row.names = FALSE)
 write.table(diffPairedUnpaired, file = "results/RQ1.2_diff_pair_unpaired.txt", sep = "\t", quote = FALSE, row.names = FALSE)
