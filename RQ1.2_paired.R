@@ -7,15 +7,16 @@ statTest <- function(data1, data2, firstApproach, secondApproach, greaterBetter,
   #if p-value is less than 0.05, we can reject the null hypothesis
   UtestPvalueUnpaired <- wilcox.test(data1, data2, exact = FALSE, paired = FALSE)$p.value
   A12estUnpaired <- VD.A(data1, data2, paired = FALSE)$estimate #A12
-  PreferredUnpaired <- ifelse(UtestPvalueUnpaired >= 0.05, "EQUAL", ifelse(A12estUnpaired > 0.5, ifelse(greaterBetter, firstApproach, secondApproach), ifelse(greaterBetter, secondApproach, firstApproach)))
+  PreferredUnpaired <- ifelse(UtestPvalueUnpaired >= 0.05, "EQUAL", ifelse(A12estUnpaired > 0.5, ifelse(greaterBetter, firstApproach, secondApproach), ifelse(A12estUnpaired < 0.5, ifelse(greaterBetter, secondApproach, firstApproach), "EQUAL")))
+  
   UtestPvaluePaired <- wilcox.test(data1, data2, exact = FALSE, paired = TRUE)$p.value
   A12estPaired <- VD.A(data1, data2, paired = TRUE)$estimate #A12
+  PreferredPaired <- ifelse(UtestPvaluePaired >= 0.05, "EQUAL", ifelse(A12estPaired > 0.5, ifelse(greaterBetter, firstApproach, secondApproach), ifelse(A12estUnpaired < 0.5, ifelse(greaterBetter, secondApproach, firstApproach), "EQUAL")))
   
   UtestPvalueUnpairedAll <- wilcox.test(data1AllResults, data2AllResults, exact = FALSE, paired = FALSE)$p.value
   A12estUnpairedAll <- VD.A(data1AllResults, data2AllResults, paired = FALSE)$estimate #A12
-  PreferredUnpairedAll <- ifelse(UtestPvalueUnpairedAll >= 0.05, "EQUAL", ifelse(A12estUnpairedAll > 0.5, ifelse(greaterBetter, firstApproach, secondApproach), ifelse(greaterBetter, secondApproach, firstApproach)))
+  PreferredUnpairedAll <- ifelse(UtestPvalueUnpairedAll >= 0.05, "EQUAL", ifelse(A12estUnpairedAll > 0.5, ifelse(greaterBetter, firstApproach, secondApproach), ifelse(A12estUnpaired < 0.5, ifelse(greaterBetter, secondApproach, firstApproach), "EQUAL")))
   
-  PreferredPaired <- ifelse(UtestPvaluePaired >= 0.05, "EQUAL", ifelse(A12estPaired > 0.5, ifelse(greaterBetter, firstApproach, secondApproach), ifelse(greaterBetter, secondApproach, firstApproach)))
   row <- data.frame(QI, firstApproach, secondApproach,
                     PreferredUnpaired, PreferredPaired, PreferredUnpairedAll,
                     UtestPvalueUnpaired, A12estUnpaired, UtestPvaluePaired, A12estPaired, UtestPvalueUnpairedAll, A12estUnpairedAll)
@@ -62,11 +63,11 @@ for (qi in QIs)
         dataStructureBetterEqPairedUnpaired <- rbind(dataStructureBetterEqPairedUnpaired, row)
         if(!(row$PreferredPaired=="EQUAL")) {
           dataStructureBetterPairedUnpaired <- rbind(dataStructureBetterPairedUnpaired, row)
-          rowFiltered <- data.frame(QI=row$QI, Algo1=row$firstApproach, Algo2=row$secondApproach, PreferredPaired=row$PreferredPaired)
+          rowFiltered <- data.frame(QI=row$QI, firstApproach=row$firstApproach, secondApproach=row$secondApproach, PreferredPaired=row$PreferredPaired)
           dataStructureBetterPaired <- rbind(dataStructureBetterPaired, rowFiltered)
         }
         if(row$PreferredUnpairedAll!=row$PreferredPaired) {
-          rowFilteredDiff <- data.frame(QI=row$QI, Algo1=row$firstApproach, Algo2=row$secondApproach, PreferredPaired=row$PreferredPaired, PreferredUnpaired=row$PreferredUnpairedAll)
+          rowFilteredDiff <- data.frame(QI=row$QI, firstApproach=row$firstApproach, secondApproach=row$secondApproach, PreferredPaired=row$PreferredPaired, PreferredUnpaired=row$PreferredUnpairedAll)
           diffPairedUnpaired <- rbind(diffPairedUnpaired, rowFilteredDiff)
         }
       }
@@ -74,5 +75,7 @@ for (qi in QIs)
   }
 }
 #allDiff <- subset(dataStructureBetterEqPaired,dataStructureBetterEqPairedUnpaired$PreferredUnpairedAll!=dataStructureBetterEqPaired$PreferredPaired)
+#write.table(dataStructureBetterEqPairedUnpaired, file = "results/RQ1.2pvaluesBetterEq_UnpairedPaired.txt", sep = "\t", quote = FALSE, row.names = FALSE)
+#write.table(dataStructureBetterPairedUnpaired, file = "results/RQ1.2pvaluesBetter_UnpairedPaired.txt", sep = "\t", quote = FALSE, row.names = FALSE)
 write.table(dataStructureBetterPaired, file = "results/RQ1.2pvaluesBetter_Paired.txt", sep = "\t", quote = FALSE, row.names = FALSE)
 write.table(diffPairedUnpaired, file = "results/RQ1.2_diff_pair_unpaired.txt", sep = "\t", quote = FALSE, row.names = FALSE)
