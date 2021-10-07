@@ -2,22 +2,22 @@ setwd(".")
 rm(list = ls(all = TRUE))
 library("effsize")#for A12 test https://rdrr.io/cran/effsize/man/VD.A.html
 
-statTest <- function(data1, data2, firstApproach, secondApproach, greaterBetter, QI, data1AllResults, data2AllResults) {
+statTest <- function(data1, data2, Algo1, Algo2, greaterBetter, QI, data1AllResults, data2AllResults) {
   #null hypothesis is that the populations are the same
   #if p-value is less than 0.05, we can reject the null hypothesis
   UtestPvalueUnpaired <- wilcox.test(data1, data2, exact = FALSE, paired = FALSE)$p.value
   A12estUnpaired <- VD.A(data1, data2, paired = FALSE)$estimate #A12
-  PreferredUnpaired <- ifelse(UtestPvalueUnpaired >= 0.05, "EQUAL", ifelse(A12estUnpaired > 0.5, ifelse(greaterBetter, firstApproach, secondApproach), ifelse(A12estUnpaired < 0.5, ifelse(greaterBetter, secondApproach, firstApproach), "EQUAL")))
+  PreferredUnpaired <- ifelse(UtestPvalueUnpaired >= 0.05, "EQUAL", ifelse(A12estUnpaired > 0.5, ifelse(greaterBetter, Algo1, Algo2), ifelse(A12estUnpaired < 0.5, ifelse(greaterBetter, Algo2, Algo1), "EQUAL")))
   
   UtestPvaluePaired <- wilcox.test(data1, data2, exact = FALSE, paired = TRUE)$p.value
   A12estPaired <- VD.A(data1, data2, paired = TRUE)$estimate #A12
-  PreferredPaired <- ifelse(UtestPvaluePaired >= 0.05, "EQUAL", ifelse(A12estPaired > 0.5, ifelse(greaterBetter, firstApproach, secondApproach), ifelse(A12estUnpaired < 0.5, ifelse(greaterBetter, secondApproach, firstApproach), "EQUAL")))
+  PreferredPaired <- ifelse(UtestPvaluePaired >= 0.05, "EQUAL", ifelse(A12estPaired > 0.5, ifelse(greaterBetter, Algo1, Algo2), ifelse(A12estUnpaired < 0.5, ifelse(greaterBetter, Algo2, Algo1), "EQUAL")))
   
   UtestPvalueUnpairedAll <- wilcox.test(data1AllResults, data2AllResults, exact = FALSE, paired = FALSE)$p.value
   A12estUnpairedAll <- VD.A(data1AllResults, data2AllResults, paired = FALSE)$estimate #A12
-  PreferredUnpairedAll <- ifelse(UtestPvalueUnpairedAll >= 0.05, "EQUAL", ifelse(A12estUnpairedAll > 0.5, ifelse(greaterBetter, firstApproach, secondApproach), ifelse(A12estUnpaired < 0.5, ifelse(greaterBetter, secondApproach, firstApproach), "EQUAL")))
+  PreferredUnpairedAll <- ifelse(UtestPvalueUnpairedAll >= 0.05, "EQUAL", ifelse(A12estUnpairedAll > 0.5, ifelse(greaterBetter, Algo1, Algo2), ifelse(A12estUnpaired < 0.5, ifelse(greaterBetter, Algo2, Algo1), "EQUAL")))
   
-  row <- data.frame(QI, firstApproach, secondApproach,
+  row <- data.frame(QI, Algo1, Algo2,
                     PreferredUnpaired, PreferredPaired, PreferredUnpairedAll,
                     UtestPvalueUnpaired, A12estUnpaired, UtestPvaluePaired, A12estPaired, UtestPvalueUnpairedAll, A12estUnpairedAll)
 }
@@ -63,11 +63,11 @@ for (qi in QIs)
         dataStructureBetterEqPairedUnpaired <- rbind(dataStructureBetterEqPairedUnpaired, row)
         if(!(row$PreferredPaired=="EQUAL")) {
           dataStructureBetterPairedUnpaired <- rbind(dataStructureBetterPairedUnpaired, row)
-          rowFiltered <- data.frame(QI=row$QI, firstApproach=row$firstApproach, secondApproach=row$secondApproach, PreferredPaired=row$PreferredPaired)
+          rowFiltered <- data.frame(QI=row$QI, Algo1=row$Algo1, Algo2=row$Algo2, PreferredPaired=row$PreferredPaired)
           dataStructureBetterPaired <- rbind(dataStructureBetterPaired, rowFiltered)
         }
         if(row$PreferredUnpairedAll!=row$PreferredPaired) {
-          rowFilteredDiff <- data.frame(QI=row$QI, firstApproach=row$firstApproach, secondApproach=row$secondApproach, PreferredPaired=row$PreferredPaired, PreferredUnpaired=row$PreferredUnpairedAll)
+          rowFilteredDiff <- data.frame(QI=row$QI, Algo1=row$Algo1, Algo2=row$Algo2, PreferredPaired=row$PreferredPaired, PreferredUnpaired=row$PreferredUnpairedAll)
           diffPairedUnpaired <- rbind(diffPairedUnpaired, rowFilteredDiff)
         }
       }
