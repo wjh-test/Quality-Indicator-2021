@@ -2,7 +2,7 @@ setwd(".")
 rm(list = ls(all = TRUE))
 library("effsize")#for A12 test https://rdrr.io/cran/effsize/man/VD.A.html
 
-statTest <- function(data1, data2, firstApproach, secondApproach, greaterBetter, QI) {
+statTest <- function(data1, data2, firstApproach, secondApproach, greaterBetter, QI, data1AllResults, data2AllResults) {
   #null hypothesis is that the populations are the same
   #if p-value is less than 0.05, we can reject the null hypothesis
   UtestPvalueUnpaired <- wilcox.test(data1, data2, exact = FALSE, paired = FALSE)$p.value
@@ -10,8 +10,15 @@ statTest <- function(data1, data2, firstApproach, secondApproach, greaterBetter,
   PreferredUnpaired <- ifelse(UtestPvalueUnpaired >= 0.05, "EQUAL", ifelse(A12estUnpaired > 0.5, ifelse(greaterBetter, firstApproach, secondApproach), ifelse(greaterBetter, secondApproach, firstApproach)))
   UtestPvaluePaired <- wilcox.test(data1, data2, exact = FALSE, paired = TRUE)$p.value
   A12estPaired <- VD.A(data1, data2, paired = TRUE)$estimate #A12
+  
+  UtestPvalueUnpairedAll <- wilcox.test(data1AllResults, data2AllResults, exact = FALSE, paired = FALSE)$p.value
+  A12estUnpairedAll <- VD.A(data1AllResults, data2AllResults, paired = FALSE)$estimate #A12
+  PreferredUnpairedAll <- ifelse(UtestPvalueUnpairedAll >= 0.05, "EQUAL", ifelse(A12estUnpairedAll > 0.5, ifelse(greaterBetter, firstApproach, secondApproach), ifelse(greaterBetter, secondApproach, firstApproach)))
+  
   PreferredPaired <- ifelse(UtestPvaluePaired >= 0.05, "EQUAL", ifelse(A12estPaired > 0.5, ifelse(greaterBetter, firstApproach, secondApproach), ifelse(greaterBetter, secondApproach, firstApproach)))
-  row <- data.frame(QI, firstApproach, secondApproach, PreferredUnpaired, PreferredPaired, UtestPvalueUnpaired, A12estUnpaired, UtestPvaluePaired, A12estPaired)
+  row <- data.frame(QI, firstApproach, secondApproach,
+                    PreferredUnpaired, PreferredPaired, PreferredUnpairedAll,
+                    UtestPvalueUnpaired, A12estUnpaired, UtestPvaluePaired, A12estPaired, UtestPvalueUnpairedAll, A12estUnpairedAll)
 }
 
 data <- read.table(file = "data/inputDataDiffStructure.txt", head = TRUE)
@@ -21,18 +28,24 @@ Problems <- as.vector(unique(data$Problem))
 
 dataS <- read.table(file = "results/RQ1.2.txt", head = TRUE)
 ALGs <- c("CELLDE", "MOCELL", "NSGA-II", "PAES", "SMPSO", "SPEA2")
-dataStructureBetter <- data.frame()#only strictly better
-dataStructureBetterEq <- data.frame()#better and equal
-dataStructureEq <- data.frame()#only equal
-stats <- data.frame()#stats
+dataStructureBetterPairedUnpaired <- data.frame()#only strictly better
+dataStructureBetterEqPairedUnpaired <- data.frame()#better and equal
+dataStructureBetterPaired <- data.frame()#only strictly better
+diffPairedUnpaired <- data.frame()
 for (qi in QIs)
 {
   dataQI <-subset(dataS, dataS$QI==qi)
-  for (alg1 in ALGs)
+  #for (alg1 in ALGs)
+  for (i in c(1:(length(ALGs)-1)))
   {
+    alg1 <- ALGs[i]
     a1data <- subset(dataQI, dataQI$Algo==alg1)
 
-    for (alg2 in ALGs) {
+    nextIndex <- i+1
+    #for (alg2 in ALGs)
+    for (j in c(nextIndex:length(ALGs)))
+    {
+      alg2 <- ALGs[j]
       if (alg1 != alg2) {
         a2data <- subset(dataQI, dataQI$Algo==alg2)
 
@@ -41,13 +54,27 @@ for (qi in QIs)
         a2dataSel <- subset(a2data, a2data$NameOfProblem %in% availableProblems)
         a1dataSel <- a1dataSel[order(a1dataSel$NameOfProblem),]
         a2dataSel <- a2dataSel[order(a2dataSel$NameOfProblem),]
-        row <- statTest(a1dataSel$Percentage, a2dataSel$Percentage, alg1, alg2, TRUE, qi)
-        stats <- rbind(stats, row)
+        
+        
+        row <- statTest(a1dataSel$Percentage, a2dataSel$Percentage, alg1, alg2, TRUE, qi, a1data$Percentage, a2data$Percentage)
+        
+        
+        dataStructureBetterEqPairedUnpaired <- rbind(dataStructureBetterEqPairedUnpaired, row)
+        if(!(row$PreferredPaired=="EQUAL")) {
+          dataStructureBetterPairedUnpaired <- rbind(dataStructureBetterPairedUnpaired, row)
+          rowFiltered <- data.frame(QI=row$QI, firstApproach=row$firstApproach, secondApproach=row$secondApproach, PreferredPaired=row$PreferredPaired)
+          dataStructureBetterPaired <- rbind(dataStructureBetterPaired, rowFiltered)
+        }
+        if(row$PreferredUnpairedAll!=row$PreferredPaired) {
+          rowFilteredDiff <- data.frame(QI=row$QI, firstApproach=row$firstApproach, secondApproach=row$secondApproach, PreferredPaired=row$PreferredPaired, PreferredUnpaired=row$PreferredUnpairedAll)
+          diffPairedUnpaired <- rbind(diffPairedUnpaired, rowFilteredDiff)
+        }
       }
     }
   }
 }
-
-#write.table(dataStructureEq, file = "results/RQ1.2pvaluesEq_UnpairedPaired.txt", sep = "\t", quote = FALSE, row.names = FALSE)
-#write.table(dataStructureBetterEq, file = "results/RQ1.2pvaluesBetterEq_UnpairedPaired.txt", sep = "\t", quote = FALSE, row.names = FALSE)
-#write.table(dataStructureBetter, file = "results/RQ1.2pvaluesBetter_UnpairedPaired.txt", sep = "\t", quote = FALSE, row.names = FALSE)
+#allDiff <- subset(dataStructureBetterEqPaired,dataStructureBetterEqPairedUnpaired$PreferredUnpairedAll!=dataStructureBetterEqPaired$PreferredPaired)
+#write.table(dataStructureBetterEqPairedUnpaired, file = "results/RQ1.2pvaluesBetterEq_UnpairedPaired.txt", sep = "\t", quote = FALSE, row.names = FALSE)
+#write.table(dataStructureBetterPairedUnpaired, file = "results/RQ1.2pvaluesBetter_UnpairedPaired.txt", sep = "\t", quote = FALSE, row.names = FALSE)
+write.table(dataStructureBetterPaired, file = "results/RQ1.2pvaluesBetter_Paired.txt", sep = "\t", quote = FALSE, row.names = FALSE)
+write.table(diffPairedUnpaired, file = "results/RQ1.2_diff_pair_unpaired.txt", sep = "\t", quote = FALSE, row.names = FALSE)
