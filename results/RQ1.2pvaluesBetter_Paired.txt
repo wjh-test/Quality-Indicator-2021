@@ -1,4 +1,4 @@
-QI	firstApproach	secondApproach	PreferredPaired
+QI	Algo1	Algo2	PreferredPaired
 HV	MOCELL	NSGA-II	NSGA-II
 HV	MOCELL	PAES	MOCELL
 HV	MOCELL	SPEA2	SPEA2
