@@ -1,4 +1,4 @@
-Algo	QI1	QI2	PreferredPaired
+Algo	QI1	QI2	Preferred
 CELLDE	HV	C	HV
 CELLDE	IGD	GS	GS
 CELLDE	EP	C	EP
