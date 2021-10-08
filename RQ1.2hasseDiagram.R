@@ -25,7 +25,10 @@ for (qi in QIs)
     {
       sel <- subset(dataPvaluesBetterQI, dataPvaluesBetterQI$Algo1==ALGs[i] & dataPvaluesBetterQI$Algo2==ALGs[j])
       if(NROW(sel)==1) {
-        dataQI[i,j] = TRUE
+        if(sel$Preferred==ALGs[i])
+          dataQI[i,j] = TRUE
+        else
+          dataQI[j,i] = TRUE
       }
     }
   }

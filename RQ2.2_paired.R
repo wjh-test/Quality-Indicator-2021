@@ -63,7 +63,7 @@ for (alg in ALGs)
         dataStructureBetterEqPairedUnpaired <- rbind(dataStructureBetterEqPairedUnpaired, row)
         if(!(row$PreferredPaired=="EQUAL")) {
           dataStructureBetterPairedUnpaired <- rbind(dataStructureBetterPairedUnpaired, row)
-          rowFiltered <- data.frame(Algo=row$alg, QI1=row$QI1, QI2=row$QI2, PreferredPaired=row$PreferredPaired)
+          rowFiltered <- data.frame(Algo=row$alg, QI1=row$QI1, QI2=row$QI2, Preferred=row$PreferredPaired)
           dataStructureBetterPaired <- rbind(dataStructureBetterPaired, rowFiltered)
         }
         if(row$PreferredUnpairedAll!=row$PreferredPaired) {
