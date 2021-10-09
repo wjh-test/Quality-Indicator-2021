@@ -2,36 +2,22 @@ setwd(".")
 rm(list = ls(all = TRUE))
 library("effsize")#for A12 test https://rdrr.io/cran/effsize/man/VD.A.html
 
-effectSize <- function(UtestPvalue, A12est, Category=""){
-  if(UtestPvalue < 0.05){
-    if((A12est >= 0.556 && A12est < 0.638)||(A12est <= 1-0.556 && A12est > 1-0.638))
-      Category <- "small"
-    else if((A12est >= 0.638 && A12est < 0.714)||(A12est <= 1-0.638 && A12est > 1-0.714))
-      Category <- "medium"
-    else if((A12est >= 0.714 && A12est <= 1.0)||(A12est <= 1-0.714 && A12est >= 0.0))
-      Category <- "large"
-    else
-      Category <- "negligible"
-  } else Category <- "negligible"
-}
-
 statTest <- function(data1, data2, QI1, QI2, greaterBetter, alg, data1AllResults, data2AllResults) {
   #null hypothesis is that the populations are the same
   #if p-value is less than 0.05, we can reject the null hypothesis
   UtestPvalueUnpaired <- wilcox.test(data1, data2, exact = FALSE, paired = FALSE)$p.value
   A12estUnpaired <- VD.A(data1, data2, paired = FALSE)$estimate #A12
-  PreferredUnpaired <- ifelse(UtestPvalueUnpaired >= 0.05, "EQUAL", ifelse(A12estUnpaired > 0.5, ifelse(greaterBetter, QI1, QI2), ifelse(A12estUnpaired < 0.5, ifelse(greaterBetter, QI2, QI1), "EQUAL")))
+  PreferredUnpaired <- ifelse(UtestPvalueUnpaired >= 0.05, "EQUAL", ifelse(A12estUnpaired >= 0.638, ifelse(greaterBetter, QI1, QI2), ifelse(A12estUnpaired <= 1-0.638, ifelse(greaterBetter, QI2, QI1), "EQUAL")))
   
   UtestPvaluePaired <- wilcox.test(data1, data2, exact = FALSE, paired = TRUE)$p.value
   A12estPaired <- VD.A(data1, data2, paired = TRUE)$estimate #A12
-  PreferredPaired <- ifelse(UtestPvaluePaired >= 0.05, "EQUAL", ifelse(A12estPaired > 0.5, ifelse(greaterBetter, QI1, QI2), ifelse(A12estUnpaired < 0.5, ifelse(greaterBetter, QI2, QI1), "EQUAL")))
-  Category <- effectSize(UtestPvaluePaired, A12estPaired)
+  PreferredPaired <- ifelse(UtestPvaluePaired >= 0.05, "EQUAL", ifelse(A12estPaired >= 0.638, ifelse(greaterBetter, QI1, QI2), ifelse(A12estUnpaired <= 1-0.638, ifelse(greaterBetter, QI2, QI1), "EQUAL")))
   
   UtestPvalueUnpairedAll <- wilcox.test(data1AllResults, data2AllResults, exact = FALSE, paired = FALSE)$p.value
   A12estUnpairedAll <- VD.A(data1AllResults, data2AllResults, paired = FALSE)$estimate #A12
-  PreferredUnpairedAll <- ifelse(UtestPvalueUnpairedAll >= 0.05, "EQUAL", ifelse(A12estUnpairedAll > 0.5, ifelse(greaterBetter, QI1, QI2), ifelse(A12estUnpaired < 0.5, ifelse(greaterBetter, QI2, QI1), "EQUAL")))
+  PreferredUnpairedAll <- ifelse(UtestPvalueUnpairedAll >= 0.05, "EQUAL", ifelse(A12estUnpairedAll >= 0.638, ifelse(greaterBetter, QI1, QI2), ifelse(A12estUnpaired <= 1-0.638, ifelse(greaterBetter, QI2, QI1), "EQUAL")))
   
-  row <- data.frame(alg, QI1, QI2, Category,
+  row <- data.frame(alg, QI1, QI2, 
                     PreferredUnpaired, PreferredPaired, PreferredUnpairedAll,
                     UtestPvalueUnpaired, A12estUnpaired, UtestPvaluePaired, A12estPaired, UtestPvalueUnpairedAll, A12estUnpairedAll)
 }
@@ -49,11 +35,6 @@ dataStructureBetterPairedUnpaired <- data.frame()#only strictly better
 dataStructureBetterEqPairedUnpaired <- data.frame()#better and equal
 dataStructureBetterPaired <- data.frame()#only strictly better
 diffPairedUnpaired <- data.frame()
-dataStructureBetterEffectSize <- data.frame()
-dataStructureBetterNegligible <- data.frame()
-dataStructureBetterSmall <- data.frame()
-dataStructureBetterMedium <- data.frame()
-dataStructureBetterLarge <- data.frame()
 for (alg in ALGs)
 {
   dataALG <-subset(dataS, dataS$Algo==alg)
@@ -84,16 +65,6 @@ for (alg in ALGs)
           dataStructureBetterPairedUnpaired <- rbind(dataStructureBetterPairedUnpaired, row)
           rowFiltered <- data.frame(Algo=row$alg, QI1=row$QI1, QI2=row$QI2, Preferred=row$PreferredPaired)
           dataStructureBetterPaired <- rbind(dataStructureBetterPaired, rowFiltered)
-          rowEffectSize <- data.frame(Algo=row$alg, QI1=row$QI1, QI2=row$QI2, Preferred=row$PreferredPaired, EffectValue=row$A12estPaired, Category=row$Category)
-          dataStructureBetterEffectSize <- rbind(dataStructureBetterEffectSize, rowEffectSize)
-          if(row$Category=="small")
-            dataStructureBetterSmall <- rbind(dataStructureBetterSmall, rowEffectSize)
-          else if(row$Category=="medium")
-            dataStructureBetterMedium <- rbind(dataStructureBetterMedium, rowEffectSize)
-          else if(row$Category=="large")
-            dataStructureBetterLarge <- rbind(dataStructureBetterLarge, rowEffectSize)
-          else
-            dataStructureBetterNegligible <- rbind(dataStructureBetterNegligible, rowEffectSize)
         }
         if(row$PreferredUnpairedAll!=row$PreferredPaired) {
           rowFilteredDiff <- data.frame(Algo=row$alg, QI1=row$QI1, QI2=row$QI2, PreferredPaired=row$PreferredPaired, PreferredUnpaired=row$PreferredUnpairedAll)
@@ -106,8 +77,3 @@ for (alg in ALGs)
 
 write.table(dataStructureBetterPaired, file = "results/RQ2.2pvaluesBetter_Paired.txt", sep = "\t", quote = FALSE, row.names = FALSE)
 write.table(diffPairedUnpaired, file = "results/RQ2.2_diff_pair_unpaired.txt", sep = "\t", quote = FALSE, row.names = FALSE)
-write.table(dataStructureBetterEffectSize, file = "results/RQ2.2pvaluesBetter_EffectSize.txt", sep = "\t", quote = FALSE, row.names = FALSE)
-write.table(dataStructureBetterSmall, file = "results/RQ2.2pvaluesBetter_EffectSize_Small.txt", sep = "\t", quote = FALSE, row.names = FALSE)
-write.table(dataStructureBetterMedium, file = "results/RQ2.2pvaluesBetter_EffectSize_Medium.txt", sep = "\t", quote = FALSE, row.names = FALSE)
-write.table(dataStructureBetterLarge, file = "results/RQ2.2pvaluesBetter_EffectSize_Large.txt", sep = "\t", quote = FALSE, row.names = FALSE)
-write.table(dataStructureBetterNegligible, file = "results/RQ2.2pvaluesBetter_EffectSize_Negligible.txt", sep = "\t", quote = FALSE, row.names = FALSE)
