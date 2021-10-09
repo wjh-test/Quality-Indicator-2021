@@ -1,0 +1,2 @@
+QI	Algo1	Algo2	Preferred	EffectValue	Category
+C	MOCELL	SPEA2	SPEA2	0.376543209876543	small
