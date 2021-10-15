@@ -3,7 +3,7 @@ rm(list = ls(all = TRUE))
 
 data <- read.table(file = "data/inputDataDiffStructureQI.txt", head = TRUE)
 QIs <- c("HV", "IGD", "EP", "GD", "GS", "ED", "PFS", "C")
-ALGs <- c("CELLDE", "MOCELL", "NSGA-II", "PAES", "SMPSO", "SPEA2")
+ALGs <- c("CellDE", "MOCell", "NSGA-II", "PAES", "SMPSO", "SPEA2")
 
 overallcount <- 0
 

@@ -4,7 +4,7 @@ library("effsize")#for A12 test https://rdrr.io/cran/effsize/man/VD.A.html
 
 data <- read.table(file = "data/inputDataDiffStructure.txt", head = TRUE)
 QIs <- c("HV", "IGD", "EP", "GD", "GS", "ED", "PFS", "C")
-ALGs <- c("CELLDE", "MOCELL", "NSGA-II", "PAES", "SMPSO", "SPEA2")
+ALGs <- c("CellDE", "MOCell", "NSGA-II", "PAES", "SMPSO", "SPEA2")
 Problems <- as.vector(unique(data$Problem))
 
 overallcount <-0
@@ -16,9 +16,9 @@ for (p in Problems)
   {
     for (alg in ALGs)
     {
-      if(alg=="CELLDE"&&p=='RM')
+      if(alg=="CellDE"&&p=='RM')
         next
-      if((alg=="CELLDE"|alg=="SMPSO")&&(p=='RALIC'|p=='WORD'|p=='NRL'))
+      if((alg=="CellDE"|alg=="SMPSO")&&(p=='RALIC'|p=='WORD'|p=='NRL'))
         next
       count <- NROW(subset(data,data$Problem==p & data$QI==qi & data$Algo==alg))
       den <- NROW(subset(data,data$Problem==p & data$QI==qi & (data$Alg1==alg | data$Alg2==alg)))
@@ -46,7 +46,7 @@ for (qi in QIs) {
 }
 
 dataS <- read.table(file = "results/RQ1.2.txt", head = TRUE)
-ALGs <- c("CELLDE", "MOCELL", "NSGA-II", "PAES", "SMPSO", "SPEA2")
+ALGs <- c("CellDE", "MOCell", "NSGA-II", "PAES", "SMPSO", "SPEA2")
 dataStructureBetter <- data.frame()#only strictly better
 dataStructureBetterEq <- data.frame()#better and equal
 dataStructureEq <- data.frame()#only equal

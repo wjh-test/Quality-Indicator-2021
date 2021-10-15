@@ -24,7 +24,7 @@ statTest <- function(data1, data2, QI1, QI2, greaterBetter, alg, data1AllResults
 
 data <- read.table(file = "data/inputDataDiffStructureQI.txt", head = TRUE)
 QIs <- c("HV", "IGD", "EP", "GD", "GS", "ED", "PFS", "C")
-ALGs <- c("CELLDE", "MOCELL", "NSGA-II", "PAES", "SMPSO", "SPEA2")
+ALGs <- c("CellDE", "MOCell", "NSGA-II", "PAES", "SMPSO", "SPEA2")
 #Problems <- c("RA", "TS", "TRA", "RP", "TM", "TP1", "TP2_1", "TP2_2", "TP2_3", "RM", "ITO", ...)
 Problems <- as.vector(unique(data$Problem))
 

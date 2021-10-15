@@ -6,9 +6,10 @@ library("Rgraphviz")
 library("hasseDiagram")
 
 QIs <- c("HV", "IGD", "EP", "GD", "GS", "ED", "PFS", "C")
-ALGs <- c("CELLDE", "MOCELL", "NSGA-II", "PAES", "SMPSO", "SPEA2")
+ALGs <- c("CellDE", "MOCell", "NSGA-II", "PAES", "SMPSO", "SPEA2")
 
 PAIRED = TRUE
+
 if(PAIRED) {
   dataPvaluesBetter <- read.table(file = "results/RQ2.2pvaluesBetter_paired.txt", head = TRUE)
 }else {

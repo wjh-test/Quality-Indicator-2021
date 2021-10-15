@@ -24,11 +24,11 @@ statTest <- function(data1, data2, Algo1, Algo2, greaterBetter, QI, data1AllResu
 
 data <- read.table(file = "data/inputDataDiffStructure.txt", head = TRUE)
 QIs <- c("HV", "IGD", "EP", "GD", "GS", "ED", "PFS", "C")
-ALGs <- c("CELLDE", "MOCELL", "NSGA-II", "PAES", "SMPSO", "SPEA2")
+ALGs <- c("CellDE", "MOCell", "NSGA-II", "PAES", "SMPSO", "SPEA2")
 Problems <- as.vector(unique(data$Problem))
 
 dataS <- read.table(file = "results/RQ1.2.txt", head = TRUE)
-ALGs <- c("CELLDE", "MOCELL", "NSGA-II", "PAES", "SMPSO", "SPEA2")
+ALGs <- c("CellDE", "MOCell", "NSGA-II", "PAES", "SMPSO", "SPEA2")
 dataStructureBetterPairedUnpaired <- data.frame()#only strictly better
 dataStructureBetterEqPairedUnpaired <- data.frame()#better and equal
 dataStructureBetterPaired <- data.frame()#only strictly better

@@ -4,7 +4,7 @@ library("effsize")#for A12 test https://rdrr.io/cran/effsize/man/VD.A.html
 
 data <- read.table(file = "data/inputDataDiffStructureQI.txt", head = TRUE)
 QIs <- c("HV", "IGD", "EP", "GD", "GS", "ED", "PFS", "C")
-ALGs <- c("CELLDE", "MOCELL", "NSGA-II", "PAES", "SMPSO", "SPEA2")
+ALGs <- c("CellDE", "MOCell", "NSGA-II", "PAES", "SMPSO", "SPEA2")
 #Problems <- c("RA", "TS", "TRA", "RP", "TM", "TP1", "TP2_1", "TP2_2", "TP2_3", "RM", "ITO", ...)
 Problems <- as.vector(unique(data$Problem))
 
@@ -17,9 +17,9 @@ for (p in Problems)
   {
     for (qi in QIs)
     {
-      if(alg=="CELLDE"&&p=='RM')
+      if(alg=="CellDE"&&p=='RM')
         next
-      if((alg=="CELLDE"|alg=="SMPSO")&&(p=='RALIC'|p=='WORD'|p=='NRL'))
+      if((alg=="CellDE"|alg=="SMPSO")&&(p=='RALIC'|p=='WORD'|p=='NRL'))
         next
       count <- NROW(subset(data,data$Problem==p & data$Algo==alg & data$QI==qi))
       den <- NROW(subset(data,data$Problem==p & data$Algo==alg & (data$QI1==qi | data$QI2==qi)))
@@ -36,9 +36,9 @@ for(a in ALGs) {
   algResults <- subset(dataDiffStructure,dataDiffStructure$Algo==a)
   write.table(algResults, file = paste0("results/byALGProblem/byALGProblem",a,".txt"), sep = "\t", quote = FALSE, row.names = FALSE)
   for(p in Problems) {
-    if(a=="CELLDE"&&p=='RM')
+    if(a=="CellDE"&&p=='RM')
       next
-    if((a=="CELLDE"|a=="SMPSO")&&(p=='RALIC'|p=='WORD'|p=='NRL'))
+    if((a=="CellDE"|a=="SMPSO")&&(p=='RALIC'|p=='WORD'|p=='NRL'))
       next
     pResults <- subset(algResults,algResults$NameOfProblem==p)[,c(3,5,6)]
     pResults <- pResults[order(-pResults$Percentage),]
