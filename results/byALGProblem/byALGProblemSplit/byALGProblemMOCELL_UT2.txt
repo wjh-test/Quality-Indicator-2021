@@ -1,9 +1,0 @@
-QI	Percentage	PercentageII
-GS	1	100
-HV	0	0
-IGD	0	0
-EP	0	0
-GD	0	0
-ED	0	0
-PFS	0	0
-C	0	0
