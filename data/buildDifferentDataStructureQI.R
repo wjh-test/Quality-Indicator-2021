@@ -4,7 +4,7 @@ library(stringr)
 
 data <- read.table(file = "inputDataDiffStructure.txt", head = TRUE)
 QIs <- c("HV", "IGD", "EP", "GD", "GS", "ED", "PFS", "C")
-ALGs <- c("CELLDE", "MOCELL", "NSGA-II", "PAES", "SMPSO", "SPEA2")
+ALGs <- c("CellDE", "MOCell", "NSGA-II", "PAES", "SMPSO", "SPEA2")
 #Problems <- c("RA", "TS", "TRA", "RP", "TM", "TP1", "TP2", "TP3", "TP4", "RM", "ITO", ...)
 Problems <- as.vector(unique(data$Problem))
 
@@ -17,9 +17,9 @@ for(p in Problems)
     {
       for(alg in ALGs)
       {
-        if(alg=="CELLDE"&&p=='RM')
+        if(alg=="CellDE"&&p=='RM')
           next
-        if((alg=="CELLDE"|alg=="SMPSO")&&(p=='RALIC'|p=='WORD'|p=='NRL'))
+        if((alg=="CellDE"|alg=="SMPSO")&&(p=='RALIC'|p=='WORD'|p=='NRL'))
           next
         count1 <- NROW(subset(data, data$Problem==p & data$QI==qi1 & data$Algo==alg))
         count2 <- NROW(subset(data, data$Problem==p & data$QI==qi2 & data$Algo==alg))

@@ -5,9 +5,13 @@ library(stringr)
 data <- read.table(file = "./inputData.csv", head = TRUE, sep = ";")
 data$A <- str_replace(data$A, "NSGAII", "NSGA-II")
 data$B <- str_replace(data$B, "NSGAII", "NSGA-II")
+data$A <- str_replace(data$A, "CELLDE", "CellDE")
+data$B <- str_replace(data$B, "CELLDE", "CellDE")
+data$A <- str_replace(data$A, "MOCELL", "MOCell")
+data$B <- str_replace(data$B, "MOCELL", "MOCell")
 
 QIs <- c("HV", "IGD", "EP", "GD", "GS", "ED", "PFS", "C")
-ALGs <- c("CELLDE", "MOCELL", "NSGA-II", "PAES", "SMPSO", "SPEA2")
+ALGs <- c("CellDE", "MOCell", "NSGA-II", "PAES", "SMPSO", "SPEA2")
 
 data$CaseStudy <- as.character(data$CaseStudy)
 #TP1 remains TP1
