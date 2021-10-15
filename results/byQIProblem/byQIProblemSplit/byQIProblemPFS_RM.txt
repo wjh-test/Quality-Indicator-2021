@@ -1,5 +1,5 @@
 Algo	Percentage	PercentageII
-MOCELL	0.5	50
+MOCell	0.5	50
 NSGA-II	0.5	50
 SPEA2	0.5	50
 PAES	0	0
