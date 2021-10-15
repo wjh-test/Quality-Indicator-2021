@@ -2,6 +2,6 @@ Algo	Percentage	PercentageII
 SPEA2	1	100
 NSGA-II	0.8	80
 SMPSO	0.6	60
-MOCELL	0.4	40
-CELLDE	0.2	20
+MOCell	0.4	40
+CellDE	0.2	20
 PAES	0	0
