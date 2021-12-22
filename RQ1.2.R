@@ -45,46 +45,44 @@ for (qi in QIs) {
   }
 }
 
+
 dataS <- read.table(file = "results/RQ1.2.txt", head = TRUE)
 ALGs <- c("CellDE", "MOCell", "NSGA-II", "PAES", "SMPSO", "SPEA2")
-dataStructureBetter <- data.frame()#only strictly better
-dataStructureBetterEq <- data.frame()#better and equal
-dataStructureEq <- data.frame()#only equal
-min <- 1.0
+dataStructureBetter <- data.frame()
 for (qi in QIs)
 {
   dataQI <-subset(dataS, dataS$QI==qi)
-  for (alg1 in ALGs)
+  #for (alg1 in ALGs)
+  for (i in c(1:(length(ALGs)-1)))
   {
+    alg1 <- ALGs[i]
     a1data <- subset(dataQI, dataQI$Algo==alg1)
-    for (alg2 in ALGs) {
+    
+    nextIndex <- i+1
+    #for (alg2 in ALGs)
+    for (j in c(nextIndex:length(ALGs)))
+    {
+      alg2 <- ALGs[j]
       if (alg1 != alg2) {
         a2data <- subset(dataQI, dataQI$Algo==alg2)
         
-        UtestPvalue <- wilcox.test(a1data$Percentage, a2data$Percentage, exact = FALSE)$p.value
-        A12est <- VD.A(a1data$Percentage, a2data$Percentage)$estimate #A12
-        if (UtestPvalue < 0.05) {
-          if ( A12est > 0.5)
-          {
-            row <- data.frame(QI=qi, Algo1 = alg1, Algo2 = alg2, Preferred = alg1)
-            dataStructureBetter <- rbind(dataStructureBetter, row)
-            dataStructureBetterEq <- rbind(dataStructureBetterEq, row)
-            if(A12est < min) min <- A12est
-          }
-        }
-        else {
-          row <- data.frame(QI=qi, Algo1 = alg1, Algo2 = alg2, Preferred = alg1)
-          dataStructureBetterEq <- rbind(dataStructureBetterEq, row)
-          dataStructureEq <- rbind(dataStructureEq, row)
+        availableProblems <- intersect(unique(a1data$NameOfProblem), unique(a2data$NameOfProblem))
+        a1dataSel <- subset(a1data, a1data$NameOfProblem %in% availableProblems)
+        a2dataSel <- subset(a2data, a2data$NameOfProblem %in% availableProblems)
+        a1dataSel <- a1dataSel[order(a1dataSel$NameOfProblem),]
+        a2dataSel <- a2dataSel[order(a2dataSel$NameOfProblem),]
+        
+        UtestPvaluePaired <- wilcox.test(a1dataSel$Percentage, a2dataSel$Percentage, exact = FALSE, paired = TRUE)$p.value
+        A12estPaired <- VD.A(a1dataSel$Percentage, a2dataSel$Percentage, paired = TRUE)$estimate #A12
+        PreferredPaired <- ifelse(UtestPvaluePaired >= 0.05, "EQUAL", ifelse(A12estPaired >= 0.638, ifelse(TRUE, alg1, alg2), ifelse(A12estPaired <= 1-0.638, ifelse(TRUE, alg2, alg1), "EQUAL")))
+        
+        if(!(PreferredPaired=="EQUAL")) {
+          row <- data.frame(QI=qi, Algo1=alg1, Algo2=alg2, Preferred=PreferredPaired)
+          dataStructureBetter <- rbind(dataStructureBetter, row)
         }
       }
     }
   }
 }
 
-write.table(dataStructureEq, file = "results/RQ1.2pvaluesEq.txt", sep = "\t", quote = FALSE, row.names = FALSE)
-write.table(dataStructureBetterEq, file = "results/RQ1.2pvaluesBetterEq.txt", sep = "\t", quote = FALSE, row.names = FALSE)
 write.table(dataStructureBetter, file = "results/RQ1.2pvaluesBetter.txt", sep = "\t", quote = FALSE, row.names = FALSE)
-
-print(overallcount)
-print(min)
