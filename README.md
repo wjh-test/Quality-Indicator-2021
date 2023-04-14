@@ -14,3 +14,5 @@ To achieve this aim, we conduct an extensive empirical evaluation with 18 search
 * Shaukat Ali https://www.simula.no/people/shaukat
 * Huihui Zhang http://www.zen-tools.com/people/huihui.html
 
+## Paper
+ J. Wu, P. Arcaini, T. Yue, S. Ali, and H. Zhang.  On the Preferences of Quality Indicators for Multi-Objective Search Algorithms in Search-Based Software Engineering. In Empirical Software Engineering 27, 6 (Nov 2022). [[doi](https://doi.org/10.1007/s10664-022-10127-4)]
